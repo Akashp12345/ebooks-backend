@@ -7,6 +7,7 @@ const config = require('./config/config');
 const {startServer} = require('./config/database');   //import database
 
 const userRoute = require('./routes/userRoutes');    //user routes
+const bookRoute = require('./routes/booksRoutes');
 
 const app = express();
 
@@ -34,7 +35,7 @@ const corsOptions = {
         "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization",
     };
 
-    
+
 // Middleware to parse JSON bodies
 app.use(cors(corsOptions))            //managing cors
 app.use(express.json())
@@ -48,6 +49,9 @@ app.use(session({
 
 // User Routes
 app.use("/api/v1/user",userRoute)
+
+// Books endpoints
+app.use("/api/v1/books",bookRoute)
 
 // Start Server
 app.listen(config.port, () => {
