@@ -18,4 +18,4 @@ const startServer = async () => {
 
 
 
-module.exports ={startServer};
+module.exports ={startServer,sequelize};
