@@ -1,20 +1,50 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors=require("cors")
-const {v4:uuid4}=require("uuid")
+const session = require('express-session');
+
 const config = require('./config/config');
-const {startServer} = require('./config/database');
-const User=require("./models/userModel");
-const userRoute = require('./routes/userRoutes');
+const {startServer} = require('./config/database');   //import database
+
+const userRoute = require('./routes/userRoutes');    //user routes
+
 const app = express();
 
 // Connecting to Database
 startServer()
 
+
+// Define CORS options
+const corsOptions = {
+      origin: function (origin, callback) {
+        const allowedOrigins =
+          process.env.NODE_ENV === "production"
+            ? process.env.ORIGIN
+            : ["http://localhost:3000"];
+    
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      credentials: true,
+      methods: "GET,PUT,POST,OPTIONS",
+      headers:
+        "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization",
+    };
+
+    
 // Middleware to parse JSON bodies
+app.use(cors(corsOptions))            //managing cors
 app.use(express.json())
 app.use(bodyParser.json());
-app.use(cors())
+app.use(session({                            
+      secret: process.env.SESSION_SECRET, 
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: true } 
+    }));
 
 // User Routes
 app.use("/api/v1/user",userRoute)
