@@ -1,8 +1,8 @@
-const { SearchBooks } = require("../controller/booksController")
+const { AllBooks } = require("../controller/booksController")
 
 const bookRoute=require("express").Router()
 
-bookRoute.get("/search",SearchBooks)
+bookRoute.get("/searchbooks",AllBooks)
 
 
 module.exports=bookRoute
