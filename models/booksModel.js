@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const {sequelize} = require('../config/database');
+const { sequelize } = require('../config/database');
 
 class Books extends Model {}
 
@@ -7,11 +7,12 @@ Books.init({
   userID: {
     type: DataTypes.STRING,
     allowNull: false,
-    primaryKey:true
+    primaryKey: true
   },
-  favourite:{
-      type:DataTypes.ARRAY,
-      allowNull:false
+  favourite: {
+    type: DataTypes.JSON, 
+    allowNull: false,
+    defaultValue: [] 
   }
 }, {
   sequelize,
