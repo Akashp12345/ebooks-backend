@@ -67,7 +67,7 @@ const signin = async (req, res) => {
       userExists?.dataValues?.password
     );
     if (!checkingpassword) {
-      return res.status(401).json({ error: "Passowrd is incorrect." });
+      return res.status(401).json({ error: "Password is incorrect." });
     }
 
     // Create token for successful login

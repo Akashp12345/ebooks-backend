@@ -105,7 +105,7 @@ const AddbookstoFavourite = async (req, res) => {
 const removeFavouriteBook = async (req, res) => {
   try {
     const { bookid } = req.query;
-    const {userid}=req.params
+    const { userid } = req.params;
 
     // Fetch the existing record
     const bookRecord = await Books.findByPk(userid);
@@ -119,8 +119,8 @@ const removeFavouriteBook = async (req, res) => {
       (book) => book.id !== bookid
     );
 
-   // Update the record
-   await Books.update(
+    // Update the record
+    await Books.update(
       { favourite: remainingbooks },
       { where: { userID: userid } }
     );
@@ -131,7 +131,6 @@ const removeFavouriteBook = async (req, res) => {
     });
 
     res.status(200).json(updatedFavourite);
-    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

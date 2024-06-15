@@ -54,6 +54,20 @@ app.use("/api/v1/user",userRoute)
 app.use("/api/v1/books",bookRoute)
 
 // Start Server
-app.listen(config.port, () => {
+const server=app.listen(config.port, () => {
       console.log(`App listening at http://localhost:${config.port}`);
     });
+
+
+
+    // Expose a method to close the server
+app.close = () => {
+      return new Promise((resolve, reject) => {
+        server.close((err) => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+    };
+
+    module.exports = app;
