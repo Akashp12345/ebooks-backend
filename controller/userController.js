@@ -64,7 +64,7 @@ const signin = async (req, res) => {
     // Check password is right or not
     const checkingpassword = await bcrypt.compare(
       password,
-      userExists?.dataValues?.password
+      userExists?.password
     );
     if (!checkingpassword) {
       return res.status(401).json({ error: "Password is incorrect." });
@@ -72,7 +72,7 @@ const signin = async (req, res) => {
 
     // Create token for successful login
     const token = jwt.sign(
-      { email: email, userid: userExists?.dataValues?.userID,fullname:userExists?.dataValues?.fullname },
+      { email: email, userid: userExists?.userID,fullname:userExists?.fullname },
       process.env.SECRET_KEY,
       { expiresIn: "1d" }
     );
