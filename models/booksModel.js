@@ -13,6 +13,16 @@ Books.init({
     type: DataTypes.JSON, 
     allowNull: false,
     defaultValue: [] 
+  },
+  markedread: {
+    type: DataTypes.JSON, 
+    allowNull: false,
+    defaultValue: [] 
+  },
+   recommend: {
+    type: DataTypes.JSON, 
+    allowNull: false,
+    defaultValue: [] 
   }
 }, {
   sequelize,
