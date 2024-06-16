@@ -7,7 +7,7 @@ const sequelize = new Sequelize(config.db.database, config.db.username, config.d
 });
 
 
-const startServer = async () => {
+const startDatabase = async () => {
   try {
     await sequelize.sync();
     console.log('Database synchronized');
@@ -15,7 +15,4 @@ const startServer = async () => {
     console.error('Unable to synchronize the database:', err);
   }
 };
-
-
-
-module.exports ={startServer,sequelize};
+module.exports ={startDatabase,sequelize};

@@ -4,7 +4,7 @@ const cors=require("cors")
 const session = require('express-session');
 const cookieParser = require("cookie-parser");
 const config = require('./config/config');
-const {startServer} = require('./config/database');   //import database
+const {startDatabase} = require('./config/database');   //import database
 
 const userRoute = require('./routes/userRoutes');    //user routes
 const bookRoute = require('./routes/booksRoutes');
@@ -12,7 +12,7 @@ const bookRoute = require('./routes/booksRoutes');
 const app = express();
 
 // Connecting to Database
-startServer()
+startDatabase()
 
 
 // Define CORS options
