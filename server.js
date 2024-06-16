@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors=require("cors")
 const session = require('express-session');
-
+const cookieParser = require("cookie-parser");
 const config = require('./config/config');
 const {startServer} = require('./config/database');   //import database
 
@@ -17,28 +17,39 @@ startServer()
 
 // Define CORS options
 const corsOptions = {
-      origin: function (origin, callback) {
-        const allowedOrigins =
-          process.env.NODE_ENV === "production"
-            ? process.env.ORIGIN
-            : ["http://localhost:3000"];
-    
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
-      credentials: true,
-      methods: "GET,PUT,POST,OPTIONS",
-      headers:
-        "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization",
-    };
+  origin: function (origin, callback) {
+    const allowedOrigins =
+      process.env.NODE_ENV === "production"
+        ? [process.env.ORIGIN]
+        : ["http://localhost:5173"];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: "GET,PUT,POST,OPTIONS",
+  allowedHeaders: ['Content-Type'],
+  exposedHeaders: ['Authorization'],
+  headers: [
+    "DNT",
+    "User-Agent",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "Cache-Control",
+    "Content-Type",
+    "Authorization"
+  ].join(",")
+};
+
 
 
 // Middleware to parse JSON bodies
 app.use(cors(corsOptions))            //managing cors
 app.use(express.json())
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(session({                            
       secret: process.env.SESSION_SECRET, 

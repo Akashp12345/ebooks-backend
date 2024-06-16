@@ -39,7 +39,17 @@ const registration = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: "Registered successfully" });
+     // Create token for successful login
+     const token = jwt.sign(
+      { email: email, userid: userExists?.userID,fullname:userExists?.fullname },
+      process.env.SECRET_KEY,
+      { expiresIn: "1d" }
+    );
+    res.setHeader('Authorization', `Bearer ${token}`);
+    res.status(201).json({ message: "Registered successfully"});
+
+    
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -76,12 +86,8 @@ const signin = async (req, res) => {
       process.env.SECRET_KEY,
       { expiresIn: "1d" }
     );
-
-
-     // Store token in session
-     req.session.token = token;
-
-    res.status(200).json(token); 
+    res.setHeader('Authorization', `Bearer ${token}`);
+    res.status(200).json({message:"Login Successfully"}); 
 
   } catch (err) {
     res.status(500).json({ error: err.message });

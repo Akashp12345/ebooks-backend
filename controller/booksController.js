@@ -8,15 +8,16 @@ const GoogleAPI_Helper = async (query, pageNumber) => {
     const result = await axios.get(process.env.GOOGLE_API, {
       params: {
         q: query || "*", // Default to all books
-        startIndex: (pageNumber - 1) * 10 || 0, // Adjust startIndex based on the page number
-        maxResults: 10, // Limit the number of results per page to 10
+        startIndex: (pageNumber - 1) * 12 || 0, // Adjust startIndex based on the page number
+        maxResults: 12, // Limit the number of results per page to 12
         key: process.env.GOOGLE_API_KEY,
       },
     });
 
     return result.data; // Return the data from the response
   } catch (err) {
-    throw new Error(`Error fetching data from Google API: ${err.message}`);
+
+    throw new Error(err.message);
   }
 };
 
@@ -24,7 +25,6 @@ const GoogleAPI_Helper = async (query, pageNumber) => {
 const AllBooks = async (req, res) => {
   try {
     const { search, pageNumber } = req.query;
-
     // Fetch books from Google API
     const response = await GoogleAPI_Helper(search, pageNumber || 1);
 
@@ -35,7 +35,7 @@ const AllBooks = async (req, res) => {
 
     let books = [];
     if (response?.totalItems > 0) {
-      books = response.items.map((item) => ({
+      books = response?.items?.map((item) => ({
         id: item.id,
         title: item.volumeInfo.title,
         authors: item.volumeInfo.authors,
@@ -48,10 +48,9 @@ const AllBooks = async (req, res) => {
       }));
     }
 
-    //     Total pages
-    const totalpages = Math.ceil(response.totalItems / 10);
-
-    res.status(200).json({ books, totalpages });
+    res
+      .status(200)
+      .json({ books: books || [], totalpages: response.totalItems });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
