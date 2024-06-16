@@ -16,7 +16,6 @@ const GoogleAPI_Helper = async (query, pageNumber) => {
 
     return result.data; // Return the data from the response
   } catch (err) {
-
     throw new Error(err.message);
   }
 };
@@ -135,4 +134,28 @@ const removeFavouriteBook = async (req, res) => {
   }
 };
 
-module.exports = { AllBooks, AddbookstoFavourite, removeFavouriteBook };
+const MyFavourite = async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    const myfavourite = await Books.findOne({
+      where: { userID: userid },
+      attributes: ["favourite"],
+    });
+
+    if (!myfavourite) {
+      return res.status(404).json({ error: "No favourite books found" });
+    }
+
+    return res.status(200).json({ books: myfavourite?.favourite ?? [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = {
+  AllBooks,
+  AddbookstoFavourite,
+  removeFavouriteBook,
+  MyFavourite,
+};
