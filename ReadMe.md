@@ -4,8 +4,8 @@
 This is Book Store Backend with user and books CRUD API.
 
 ## Table of Contents
-- Installation
-- Usage
+- [Installation](#installation)
+- [Usage](#usage)
 - API Reference
 - Database
 - Testing
@@ -13,9 +13,20 @@ This is Book Store Backend with user and books CRUD API.
 
 ## Installation
 1. Clone the repository:
-```bash
-git clone <repository_url>
+   ```bash
+   git clone <repository_url>
 
 2. Install Dependencies:
-```bash
-npm install
+   ```bash
+   npm install
+
+## Usage
+1.  Start Server 
+    ```bash
+    npm start   
+
+2. For Testing Server
+   ```bash
+   npm test
+
+
