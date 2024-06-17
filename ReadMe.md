@@ -6,7 +6,7 @@ This is Book Store Backend with user and books CRUD API.
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
-- API Reference
+- [API Reference](#api-reference)
 - Database
 - Testing
 - Deployment
@@ -16,7 +16,11 @@ This is Book Store Backend with user and books CRUD API.
    ```bash
    git clone <repository_url>
 
-2. Install Dependencies:
+2. Go to the project
+   ```bash
+   cd Ebooks-backend   
+
+3. Install Dependencies:
    ```bash
    npm install
 
@@ -25,8 +29,34 @@ This is Book Store Backend with user and books CRUD API.
     ```bash
     npm start   
 
-2. For Testing Server
-   ```bash
-   npm test
+## API Reference 
+
+## User Endpoints
+
+### POST /api/v1/user/register
+- **Description**: Register the user.
+- **Request**:
+  ```http
+  POST /api/v1/user/register
+- **Request Body**:
+  ```json
+  \{name:"Test User",email:"test@example.com",password:"password@12345"\}
+- **Response**:
+  ```json
+  message:Registered Successfully
+
+
+### POST /api/v1/user/register
+- **Description**: Register the user.
+- **Request**:
+  ```http
+  POST /api/v1/user/signin
+- **Request Body**:
+  ```json
+  \{email:"test@example.com",password:"password@12345"\}
+- **Response**:
+  ```json
+  message:Login Successfully
+
 
 
