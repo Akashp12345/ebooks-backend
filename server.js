@@ -4,12 +4,13 @@ const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const config = require("./config/config");
-const { startDatabase } = require("./config/database"); //import database
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
-const userRoute = require("./routes/userRoutes"); //user routes
+const { startDatabase } = require("./config/database");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+const userRoute = require("./routes/userRoutes");
 const bookRoute = require("./routes/booksRoutes");
-const {swaggerOptions}=require("./utils/swaggeroptions")
+const { swaggerOptions } = require("./utils/swaggeroptions");
+
 const app = express();
 
 // Connecting to Database
@@ -37,11 +38,10 @@ const corsOptions = {
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-
-// Middleware to parse JSON bodies
-app.use(cors(corsOptions)); //managing cors
+// Middleware setup
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -50,31 +50,28 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true },
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Set secure flag based on environment
+    },
   })
 );
 
-// User Routes
+// Routes setup
 app.use("/api/v1/user", userRoute);
-
-// Books endpoints
 app.use("/api/v1/books", bookRoute);
 
 // Start Server
-const server=""
-if(process.env.NODE_ENV === "production"){
+let server;
+if (process.env.NODE_ENV === "production") {
   const https = require("https");
-  https.createServer(app).listen(config.port, () => {
+  server = https.createServer(app).listen(config.port, () => {
     console.log("Server is running on port " + config.port);
   });
-}
-else{
-    server = app.listen(config.port, () => {
+} else {
+  server = app.listen(config.port, () => {
     console.log(`App listening at http://localhost:${config.port}`);
   });
 }
-
-
 
 // Expose a method to close the server
 app.close = () => {
