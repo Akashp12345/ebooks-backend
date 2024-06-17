@@ -61,17 +61,11 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/books", bookRoute);
 
 // Start Server
-let server;
-if (process.env.NODE_ENV === "production") {
-  const https = require("https");
-  server = https.createServer(app).listen(config.port, () => {
-    console.log("Server is running on port " + config.port);
-  });
-} else {
-  server = app.listen(config.port, () => {
+
+ let server = app.listen(config.port, () => {
     console.log(`App listening at http://localhost:${config.port}`);
   });
-}
+
 
 // Expose a method to close the server
 app.close = () => {
