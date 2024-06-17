@@ -138,7 +138,7 @@ const AllBooks = async (req, res) => {
       totalpages: response.totalItems, // Update with actual total pages
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -202,7 +202,7 @@ const AddbookstoFavourite = async (req, res) => {
 
     res.status(200).json(updatedFavourite);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -221,7 +221,7 @@ const MyFavourite = async (req, res) => {
 
     return res.status(200).json({ books: myfavourite?.favourite ?? [] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -267,7 +267,7 @@ const MarkasRead = async (req, res) => {
 
     res.status(200).json(updatedRead);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
