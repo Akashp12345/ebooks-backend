@@ -22,11 +22,21 @@ fi
 echo "Cleaning up existing files in /home/ubuntu/ebooks-backend..."
 rm -rf /home/ubuntu/ebooks-backend/* || { echo "Failed to clean up existing files"; exit 1; }
 
-# Install necessary dependencies
+# Update package lists
 echo "Updating package lists..."
 sudo apt-get update || { echo "Failed to update package lists"; exit 1; }
 
+# Fix broken packages
+echo "Fixing broken packages..."
+sudo apt-get install -f || { echo "Failed to fix broken packages"; exit 1; }
+
+# Clean up local repository
+echo "Cleaning up local repository..."
+sudo apt-get clean || { echo "Failed to clean local repository"; exit 1; }
+
+# Install Node.js and npm using NodeSource
 echo "Installing Node.js and npm..."
-sudo apt-get install -y nodejs npm || { echo "Failed to install Node.js and npm"; exit 1; }
+curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash - || { echo "Failed to add NodeSource repository"; exit 1; }
+sudo apt-get install -y nodejs || { echo "Failed to install Node.js and npm"; exit 1; }
 
 echo "before_install.sh completed successfully."
