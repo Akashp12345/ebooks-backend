@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Stop the existing PM2 process
-pm2 stop server || true
+# Install PM2 globally
+npm install -g pm2
 
-# Remove any temporary files or logs
-# For example:
-# rm -rf /path/to/your/application/tmp/*
-
-# Additional cleanup steps as needed
+# Stop Nginx
+# sudo systemctl stop nginx
