@@ -16,7 +16,7 @@ git pull origin $BRANCH
 npm install
 
 # Check if the process is already running
-if ! pm2 describe "$PM2_APP_NAME" &> /dev/null; then
+if ! pm2 describe "$DESIRED_NAME" &> /dev/null; then
     # If not running, start the process with the desired name
     pm2 start "$PM2_APP_NAME" --name "$DESIRED_NAME"
 else
