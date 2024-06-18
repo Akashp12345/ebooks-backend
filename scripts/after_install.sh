@@ -1,4 +1,4 @@
 #!/bin/bash
+mkdir /home/ubuntu/ebooks-backend
 cd /home/ubuntu/ebooks-backend
-npm install
-s
+sudo npm install
