@@ -29,18 +29,6 @@ This is Book Store Backend with user and books CRUD API.
 - Nodejs
 - Packages listed in `package.json`
 
-## Packages Used <!-- Packages Used  -->
-
-- **axios**: A promise-based HTTP client for the browser and Node.js, used to fetch data from the Google Books API.
-- **bcrypt**: A library for hashing passwords, providing security for user authentication.
-- **cors**: Middleware to enable Cross-Origin Resource Sharing, allowing your server to handle requests from different origins.
-- **dotenv**: A module that loads environment variables from a `.env` file into `process.env`, helping to manage configuration.
-- **express**: A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
-- **jsonwebtoken**: A library to sign, verify, and decode JSON Web Tokens, used for authentication and secure data exchange.
-- **mysql2**: A fast MySQL client for Node.js, supporting prepared statements, non-blocking queries, and other features.
-- **sequelize**: A promise-based ORM for Node.js and MySQL (among other databases), which supports a variety of database operations and models.
-- **uuid**: A library for generating RFC-compliant UUIDs (Universally Unique Identifiers), useful for creating unique IDs for resources.
-
 ## Installation <!-- Installation -->
 
 1. Clone the repository:
@@ -69,19 +57,32 @@ This is Book Store Backend with user and books CRUD API.
     npm start
     ```
 
+## Packages Used <!-- Packages Used  -->
+
+- **axios**: A promise-based HTTP client for the browser and Node.js, used to fetch data from the Google Books API.
+- **bcrypt**: Used for hashing the user password.
+- **cors**: Used to handle requests from different origins.
+- **dotenv**: This library used for environment variables like database password and connection link.
+- **express**: Used to create light nodejs application.
+- **jsonwebtoken**: Used for authentication and secure data exchange.
+- **mysql2**: Used fo handle MySQL server.
+- **sequelize**: This ORM used for create models and database connection, CRUD operations.
+- **uuid**: Used for create unique id for each documents.
+- **swagger**: Used for create API documentation.
+
 ## API Reference <!-- API Reference -->
 
-We used Swagger for API documentation. Kindly go to the given URL and check the APIs:
-  ```bash
-  ${baseurl}/api-docs
-  ```
- 
+Used Swagger(OpenAPI) for API documentation. Kindly go to the given URL and check the APIs:
+
+```bash
+https://booksapi.akash-patil.info/api-docs
+```
 
 <!-- Testing Section -->
 
 ## Testing
 
-We used jest and supertest library for testing API.
+Used jest and supertest library for testing API.
 
 - Test Command
   ```bash
@@ -93,15 +94,15 @@ We used jest and supertest library for testing API.
 ### Technology Used
 
 - **AWS EC2**: Amazon Web Services Elastic Compute Cloud (EC2) is used to deploy the server.
-- **Nginx**: Nginx is a high-performance web server and reverse proxy server. It is used to serve the website, handle load balancing, and manage incoming HTTP requests efficiently.
-- **pm2**: PM2 is a production process manager for Node.js applications. It helps manage application processes, provides monitoring and logging, and ensures that applications run continuously by automatically restarting them if they crash.
-- **AWS CodePipeline**: AWS CodePipeline is a continuous integration and continuous delivery (CI/CD) service for fast and reliable application updates. It automates the build, test, and deploy phases of your release process, helping to streamline the deployment of your website.
+- **Nginx**:It is used to serve the api, handle load balancing, and manage incoming HTTP requests efficiently.
+- **pm2**: It is used for manage the process and automatically restart the server on crash.
+- **AWS CodePipeline**: AWS CodePipeline is used to CI/CD.
 
-
-## AWS CodePipeline Stages
+### AWS CodePipeline Stages
 
 ### Overview
-AWS CodePipeline automates the build, test, and deployment phases of your release process every time there is a code change, based on the release model you define. Here are the stages typically involved in a CodePipeline setup for deploying a web application:
+
+Used AWS CodePipeline for CI/CD. Here are the stages typically involved in a CodePipeline setup for deploying a web application:
 
 ### Stages
 
@@ -111,14 +112,29 @@ AWS CodePipeline automates the build, test, and deployment phases of your releas
 ### Stage Details
 
 #### 1. Source
+
 - **Description**: The source stage retrieves the source code for the application from a version control repository.
 - **Action Provider**: AWS CodeCommit.
 - **Example Configuration**:
-  - **Repository**: The repository containing the source code (e.g., `my-git-repo`).
-  - **Branch**: The branch to monitor for changes (e.g., `main` or `master`).
+  - **Repository**: The repository containing the source code (`ebooks-backend`).
+  - **Branch**: The branch to monitor for changes (`main`).
   - **Output Artifact**: The output artifact is a ZIP file containing the source code, which is passed to the next stage.
 
 #### 2. Deploy
 
-- **Description**: The deploy stage takes the built artifacts and deploys them to the specified environment (e.g., EC2 instances).
+- **Description**: The deploy stage takes the built artifacts and deploys them to the specified environment (EC2 instance).
 - **Action Provider**: AWS CodeDeploy.
+- **Configuration**: For deploy need `appspec.yml` file which contain all deployment stages.
+- **Example**:
+  ```yaml
+   version: 0.0
+   os: linux
+   files:
+      - source: /
+        destination: /home/ubuntu/ebooks-backend
+   hooks:
+     AfterInstall:
+        - location: .deploy.sh
+        timeout: 300
+        runas: root
+  ```

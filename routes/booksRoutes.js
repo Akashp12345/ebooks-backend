@@ -16,7 +16,7 @@ const {
      *     parameters:
      *       - in: path
      *         name: userid
-     *         required: true
+     *         required: false
      *         schema:
      *           type: string
      *         description: The user ID

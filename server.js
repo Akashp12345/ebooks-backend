@@ -9,7 +9,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const userRoute = require("./routes/userRoutes");
 const bookRoute = require("./routes/booksRoutes");
-const { swaggerOptions } = require("./utils/swaggeroptions");
+const { swaggerfn } = require("./utils/swaggeroptions");
 
 const app = express();
 
@@ -18,10 +18,7 @@ startDatabase();
 
 // Define CORS options
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? process.env.ORIGIN
-      : "http://localhost:5173",
+  origin:process.env.ORIGIN,
   credentials: true,
   methods: "GET,PUT,POST,OPTIONS",
   allowedHeaders: ["Content-Type"],
@@ -37,7 +34,7 @@ const corsOptions = {
   ].join(","),
 };
 
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
+const swaggerDocs = swaggerJsdoc(swaggerfn());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Middleware setup
