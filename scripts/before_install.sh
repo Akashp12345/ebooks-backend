@@ -1,5 +1,10 @@
 #!/bin/bash
-# Install node.js and PM2 globally
+
+# Stop the existing PM2 process
 pm2 stop server || true
-cd /home/ubuntu/ebooks-backend
-git pull origin main
+
+# Remove any temporary files or logs
+# For example:
+# rm -rf /path/to/your/application/tmp/*
+
+# Additional cleanup steps as needed
