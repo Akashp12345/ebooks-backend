@@ -23,7 +23,7 @@ const GoogleAPI_Helper = async (query, pageNumber) => {
 // Helper for fetching books from Google API
 const Recommendation_Helper = async (query) => {
   try {
-    console.log(query)
+  
     const result = await axios.get(process.env.GOOGLE_API, {
       params: {
         q: query,
@@ -34,7 +34,6 @@ const Recommendation_Helper = async (query) => {
 
     return result.data;
   } catch (err) {
-    
     throw new Error(err.message);
   }
 };
@@ -83,40 +82,36 @@ const AllBooks = async (req, res) => {
         { where: { userID: req.params.userid } }
       );
     }
-    
+
     // Retrieve recommendations if available
     let recommended = [];
     if (mybooks?.recommend?.length > 0) {
-    
       const recommendation = transformArray(mybooks?.recommend);
-     if(recommendation){
-      const recommendationResponse = await Recommendation_Helper(
-        recommendation
-      );
-      recommended = recommendationResponse?.items?.map((item) => ({
-        id: item.id,
-        title: item.volumeInfo.title,
-        authors: item.volumeInfo.authors,
-        category: item.volumeInfo.categories,
-        publishedDate: item.volumeInfo.publishedDate,
-        previewLink: item.volumeInfo.previewLink,
-        thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
-        favourite:
-          mybooks?.favourite?.some((book) => book.id === item.id) || false,
-        readstatus:
-          mybooks?.markedread?.some((book) => book.id === item.id) || false,
-        price:
-          item.saleInfo?.saleability === "FOR_SALE"
-            ? item.saleInfo?.retailPrice?.amount
-            : 0,
-        rating: item.volumeInfo?.averageRating || 0,
-      }));
-     }
-      
-     
+      if (recommendation) {
+        const recommendationResponse = await Recommendation_Helper(
+          recommendation
+        );
+        recommended = recommendationResponse?.items?.map((item) => ({
+          id: item.id,
+          title: item.volumeInfo.title,
+          authors: item.volumeInfo.authors,
+          category: item.volumeInfo.categories,
+          publishedDate: item.volumeInfo.publishedDate,
+          previewLink: item.volumeInfo.previewLink,
+          thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+          favourite:
+            mybooks?.favourite?.some((book) => book.id === item.id) || false,
+          readstatus:
+            mybooks?.markedread?.some((book) => book.id === item.id) || false,
+          price:
+            item.saleInfo?.saleability === "FOR_SALE"
+              ? item.saleInfo?.retailPrice?.amount
+              : 0,
+          rating: item.volumeInfo?.averageRating || 0,
+        }));
+      }
     }
 
-  
     // Process fetched books
     let books = [];
     if (response?.totalItems > 0) {
@@ -142,11 +137,11 @@ const AllBooks = async (req, res) => {
 
     res.status(200).json({
       books: books || [],
-      recommended: recommended.slice(6),
+      recommended: recommended?.slice(6) ?? [],
       totalpages: response.totalItems, // Update with actual total pages
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400).json({ error: err.message });
   }
 };
@@ -154,15 +149,13 @@ const AllBooks = async (req, res) => {
 const AddtoRecommandation = async (body, bookRecord, userid) => {
   // Destructure necessary values
   const { recommend = [] } = bookRecord;
-  const { authors = [],category=[]} = body;
+  const { authors = [], category = [] } = body;
 
-const newRecommend = [
-  ...recommend,
-  ...(authors.length > 0 ? [{ inauthor: authors }] : []),
-  ...(category.length > 0 ? [{ subject: category }] : []),
-];
-
-
+  const newRecommend = [
+    ...recommend,
+    ...(authors.length > 0 ? [{ inauthor: authors }] : []),
+    ...(category.length > 0 ? [{ subject: category }] : []),
+  ];
 
   // Update the record
   await Books.update(
@@ -178,40 +171,42 @@ const AddbookstoFavourite = async (req, res) => {
     const { userid } = req.params;
     const { body } = req;
 
-    // Fetch or create the book record
-    let [bookRecord] = await Books.findOrCreate({
-      where: { userID: userid },
-      defaults: { userID: userid, favourite: [] },
-    });
+    if (userid) {
+      // Fetch or create the book record
+      let [bookRecord] = await Books.findOrCreate({
+        where: { userID: userid },
+        defaults: { userID: userid, favourite: [] },
+      });
 
-    // Destructure the record and its favourite array
-    let { favourite } = bookRecord;
+      // Destructure the record and its favourite array
+      let { favourite } = bookRecord;
 
-    // Check if the book already exists in favourites
-    const exists = favourite.some((book) => book.id === body.id);
+      // Check if the book already exists in favourites
+      const exists = favourite.some((book) => book.id === body.id);
 
-    // Update the favourite list
-    if (exists) {
-      // Remove book from favourite list
-      favourite = favourite.filter((book) => book.id !== body.id);
-    } else {
-      // Add book to favourite list
-      favourite.push({ ...body, favourite: true });
+      // Update the favourite list
+      if (exists) {
+        // Remove book from favourite list
+        favourite = favourite.filter((book) => book.id !== body.id);
+      } else {
+        // Add book to favourite list
+        favourite.push({ ...body, favourite: true });
+      }
+
+      // Update the record
+      await Books.update({ favourite }, { where: { userID: userid } });
+
+      // Call AddtoRecommandation function
+      await AddtoRecommandation(body, bookRecord, userid);
+
+      // Fetch updated favourite list
+      const updatedFavourite = await Books.findOne({
+        where: { userID: userid },
+        attributes: ["favourite"],
+      });
+
+      res.status(200).json(updatedFavourite);
     }
-
-    // Update the record
-    await Books.update({ favourite }, { where: { userID: userid } });
-
-    // Call AddtoRecommandation function
-    await AddtoRecommandation(body, bookRecord, userid);
-
-    // Fetch updated favourite list
-    const updatedFavourite = await Books.findOne({
-      where: { userID: userid },
-      attributes: ["favourite"],
-    });
-
-    res.status(200).json(updatedFavourite);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -223,19 +218,25 @@ const MyFavourite = async (req, res) => {
 
     const myfavourite = await Books.findOne({
       where: { userID: userid },
-      attributes: ["favourite"],
+      attributes: ["favourite","markedread"],
     });
 
     if (!myfavourite) {
       return res.status(404).json({ error: "No favourite books found" });
     }
 
-    return res.status(200).json({ books: myfavourite?.favourite ?? [] });
+    let newfavourite=myfavourite?.favourite?.map(item=>{
+      return {
+        ...item,
+        readstatus:myfavourite?.markedread?.some(val=>val.id===item?.id)
+      }
+    })
+
+    return res.status(200).json({ books: newfavourite ?? [] });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 // Mark As Read
 const MarkasRead = async (req, res) => {
@@ -243,40 +244,42 @@ const MarkasRead = async (req, res) => {
     const { userid } = req.params;
     const { body } = req;
 
-    // Fetch or create the book record
-    let [bookRecord] = await Books.findOrCreate({
-      where: { userID: userid },
-      defaults: { userID: userid, markedread: [] },
-    });
+    if (userid) {
+      // Fetch or create the book record
+      let [bookRecord] = await Books.findOrCreate({
+        where: { userID: userid },
+        defaults: { userID: userid, markedread: [] },
+      });
 
-    // Destructure the record and its marked read array
-    let { markedread } = bookRecord;
+      // Destructure the record and its marked read array
+      let { markedread } = bookRecord;
 
-    // Check if the book already exists in marked read
-    const exists = markedread.some((book) => book.id === body.id);
+      // Check if the book already exists in marked read
+      const exists = markedread.some((book) => book.id === body.id);
 
-    // Update the marked read list
-    if (exists) {
-      // Remove book from marked read list
-      markedread = markedread.filter((book) => book.id !== body.id);
-    } else {
-      // Add book to marked read list
-      markedread.push({ ...body, readstatus: true });
+      // Update the marked read list
+      if (exists) {
+        // Remove book from marked read list
+        markedread = markedread.filter((book) => book.id !== body.id);
+      } else {
+        // Add book to marked read list
+        markedread.push({ ...body, readstatus: true });
+      }
+
+      // Update the record
+      await Books.update({ markedread }, { where: { userID: userid } });
+
+      // Call AddtoRecommandation function
+      await AddtoRecommandation(body, bookRecord, userid);
+
+      // Fetch updated marked read list
+      const updatedRead = await Books.findOne({
+        where: { userID: userid },
+        attributes: ["markedread"],
+      });
+
+      res.status(200).json(updatedRead);
     }
-
-    // Update the record
-    await Books.update({ markedread }, { where: { userID: userid } });
-
-    // Call AddtoRecommandation function
-    await AddtoRecommandation(body, bookRecord, userid);
-
-    // Fetch updated marked read list
-    const updatedRead = await Books.findOne({
-      where: { userID: userid },
-      attributes: ["markedread"],
-    });
-
-    res.status(200).json(updatedRead);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
