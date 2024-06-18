@@ -75,7 +75,7 @@ This is Book Store Backend with user and books CRUD API.
 Used Swagger(OpenAPI) for API documentation. Kindly go to the given URL and check the APIs:
 
 ```bash
-https://booksapi.akash-patil.info/api-docs
+https://bookapi.akash-patil.info/api-docs
 ```
 
 <!-- Testing Section -->
