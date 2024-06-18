@@ -3,21 +3,19 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/ebooks-backend
+    overwrite: false
 
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
       timeout: 300
       runas: ubuntu
-  Install:
-    - location: scripts/install.sh
-      timeout: 300
-      runas: ubuntu    
   AfterInstall:
     - location: scripts/after_install.sh
       timeout: 300
       runas: ubuntu
   ApplicationStart:
-    - location: scripts/start_server.sh
+    - location: scripts/application_start.sh
       timeout: 300
       runas: ubuntu
+
