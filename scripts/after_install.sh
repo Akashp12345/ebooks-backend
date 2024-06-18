@@ -1,4 +1,5 @@
 #!/bin/bash
-mkdir /home/ubuntu/ebooks-backend
+
 cd /home/ubuntu/ebooks-backend
-sudo npm install
+git pull origin main
+sudo npm i
