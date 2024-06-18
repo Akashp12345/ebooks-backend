@@ -23,6 +23,7 @@ const GoogleAPI_Helper = async (query, pageNumber) => {
 // Helper for fetching books from Google API
 const Recommendation_Helper = async (query) => {
   try {
+    console.log(query)
     const result = await axios.get(process.env.GOOGLE_API, {
       params: {
         q: query,
@@ -33,6 +34,7 @@ const Recommendation_Helper = async (query) => {
 
     return result.data;
   } catch (err) {
+    
     throw new Error(err.message);
   }
 };
@@ -81,11 +83,13 @@ const AllBooks = async (req, res) => {
         { where: { userID: req.params.userid } }
       );
     }
-
+    
     // Retrieve recommendations if available
     let recommended = [];
     if (mybooks?.recommend?.length > 0) {
+    
       const recommendation = transformArray(mybooks?.recommend);
+     if(recommendation){
       const recommendationResponse = await Recommendation_Helper(
         recommendation
       );
@@ -107,8 +111,12 @@ const AllBooks = async (req, res) => {
             : 0,
         rating: item.volumeInfo?.averageRating || 0,
       }));
+     }
+      
+     
     }
 
+  
     // Process fetched books
     let books = [];
     if (response?.totalItems > 0) {
@@ -138,6 +146,7 @@ const AllBooks = async (req, res) => {
       totalpages: response.totalItems, // Update with actual total pages
     });
   } catch (err) {
+    console.log(err)
     res.status(400).json({ error: err.message });
   }
 };
@@ -145,13 +154,15 @@ const AllBooks = async (req, res) => {
 const AddtoRecommandation = async (body, bookRecord, userid) => {
   // Destructure necessary values
   const { recommend = [] } = bookRecord;
-  const { authors = [], categories = [] } = body;
+  const { authors = [],category=[]} = body;
 
-  const newRecommend = [
-    ...recommend,
-    { inauthor: authors },
-    { subject: categories },
-  ];
+const newRecommend = [
+  ...recommend,
+  ...(authors.length > 0 ? [{ inauthor: authors }] : []),
+  ...(category.length > 0 ? [{ subject: category }] : []),
+];
+
+
 
   // Update the record
   await Books.update(
