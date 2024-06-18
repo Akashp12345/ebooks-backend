@@ -14,6 +14,6 @@ git pull origin $BRANCH
 
 # Install dependencies
 npm install
-
+ 
 # Restart the PM2 process
-pm2 restart $PM2_APP_NAME
+pm2 start $PM2_APP_NAME
