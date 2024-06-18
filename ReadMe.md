@@ -134,7 +134,7 @@ Used AWS CodePipeline for CI/CD. Here are the stages typically involved in a Cod
         destination: /home/ubuntu/ebooks-backend
    hooks:
      AfterInstall:
-        - location: .deploy.sh
+        - location: deploy.sh
         timeout: 300
         runas: root
   ```
