@@ -85,7 +85,7 @@ const AllBooks = async (req, res) => {
 
     // Retrieve recommendations if available
     let recommended = [];
-    if (mybooks?.recommend?.length > 0) {
+    if (mybooks?.recommend?.length > 0 &&req.params.userid) {
       const recommendation = transformArray(mybooks?.recommend);
       if (recommendation) {
         const recommendationResponse = await Recommendation_Helper(
