@@ -10,7 +10,7 @@ const swaggerOptions = {
         },
         servers: [
           {
-            url: 'http://localhost:5002',
+            url: 'https://bookapi.akash-patil.info/2',
           },
         ],
       },
