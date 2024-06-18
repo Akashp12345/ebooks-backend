@@ -4,7 +4,7 @@
 APP_DIR="/home/ubuntu/ebooks-backend"
 REPO_URL="https://your-repo-url"
 BRANCH="main"
-PM2_APP_NAME="server"
+PM2_APP_NAME="server.js"
 
 # Navigate to the app directory
 cd $APP_DIR
